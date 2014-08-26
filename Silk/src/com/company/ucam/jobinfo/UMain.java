@@ -350,7 +350,7 @@ public class UMain extends JFrame {
 
 		//		textArea.append("job.numactivelay(): " + job.numactivelay() + "\n");
 
-		// ktcomp_p.getape(num);
+		// 		ktcomp_p.getape(num);
 
 		// ------------------------- koniec wlasciwego programu ------------------------
 
