@@ -1,0 +1,28 @@
+MSGERR:Ucam Version v9.2.3-120127
+Loading libraries for Windows 7 6.1 x86
+MSGERR:File ETSCAM_DAT:ucam.db not found.
+Exception in thread "main" java.lang.NoClassDefFoundError: com/jidesoft/action/DefaultDockableBarDockableHolder
+MSGERR:	at java.lang.ClassLoader.defineClass1(Native Method)
+MSGERR:	at java.lang.ClassLoader.defineClassCond(Unknown Source)
+MSGERR:	at java.lang.ClassLoader.defineClass(Unknown Source)
+MSGERR:	at java.security.SecureClassLoader.defineClass(Unknown Source)
+MSGERR:	at java.net.URLClassLoader.defineClass(Unknown Source)
+MSGERR:	at java.net.URLClassLoader.access$000(Unknown Source)
+MSGERR:	at java.net.URLClassLoader$1.run(Unknown Source)
+MSGERR:	at java.security.AccessController.doPrivileged(Native Method)
+MSGERR:	at java.net.URLClassLoader.findClass(Unknown Source)
+MSGERR:	at java.lang.ClassLoader.loadClass(Unknown Source)
+MSGERR:	at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+MSGERR:	at java.lang.ClassLoader.loadClass(Unknown Source)
+MSGERR:	at com.barco.ets.ucam.log4ucam.LogViewerGUI.showLog(LogViewerGUI.java:43)
+MSGERR:	at com.barco.ets.ucam.hypertool.UcamMain.init(UcamMain.java:444)
+MSGERR:	at com.barco.ets.ucam.hypertool.UcamMain.init(UcamMain.java:192)
+MSGERR:	at Ucam.main(Ucam.java:17)
+MSGERR:Caused by: java.lang.ClassNotFoundException: com.jidesoft.action.DefaultDockableBarDockableHolder
+MSGERR:	at java.net.URLClassLoader$1.run(Unknown Source)
+MSGERR:	at java.security.AccessController.doPrivileged(Native Method)
+MSGERR:	at java.net.URLClassLoader.findClass(Unknown Source)
+MSGERR:	at java.lang.ClassLoader.loadClass(Unknown Source)
+MSGERR:	at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+MSGERR:	at java.lang.ClassLoader.loadClass(Unknown Source)
+MSGERR:	... 16 more
