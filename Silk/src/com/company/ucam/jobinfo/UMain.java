@@ -344,8 +344,8 @@ public class UMain extends JFrame {
 		textArea.append("\noutline_p is exported to ext. gerber: " + i);
 		outline_p.unload();
 
-//		Properties p = new Properties(System.getProperties());
-//		p.list(System.out);
+		//		Properties p = new Properties(System.getProperties());
+		//		p.list(System.out);
 
 		//		textArea.append("job.numactivelay(): " + job.numactivelay() + "\n");
 
@@ -353,27 +353,29 @@ public class UMain extends JFrame {
 
 		// ------------------------- koniec wlasciwego programu ------------------------
 
-		outline_p.select_object("d");
-		i = outline_p.select_count();
-		textArea.append("\noutline_p.select_count(): " + i + "\n");
+		// smietnik
 
-		outline_p.select_all("-");
-
-		outline_p.select_object("f");
-		i = outline_p.select_count();
-		textArea.append("outline_p.select_count(): " + i + "\n");
-
-		outline_p.select_all("-");
-
-		outline_p.select_object("a");
-		i = outline_p.select_count();
-		textArea.append("outline_p.select_count(): " + i + "\n");
-
-		outline_p.select_all("-");
-
-		outline_p.select_object("v");
-		i = outline_p.select_count();
-		textArea.append("outline_p.select_count(): " + i + "\n");
+		//		outline_p.select_object("d");
+		//		i = outline_p.select_count();
+		//		textArea.append("\noutline_p.select_count(): " + i + "\n");
+		//
+		//		outline_p.select_all("-");
+		//
+		//		outline_p.select_object("f");
+		//		i = outline_p.select_count();
+		//		textArea.append("outline_p.select_count(): " + i + "\n");
+		//
+		//		outline_p.select_all("-");
+		//
+		//		outline_p.select_object("a");
+		//		i = outline_p.select_count();
+		//		textArea.append("outline_p.select_count(): " + i + "\n");
+		//
+		//		outline_p.select_all("-");
+		//
+		//		outline_p.select_object("v");
+		//		i = outline_p.select_count();
+		//		textArea.append("outline_p.select_count(): " + i + "\n");
 
 		// // utworz nowa warstwe
 		// Udrilayer cl = (Udrilayer) Udrilayer.cO.create();
@@ -516,46 +518,46 @@ public class UMain extends JFrame {
 		// myUlayer.setactive(true);
 		// textArea.append("myUlayer" + myUlayer + "\n");
 
-		Uxjob curJob = Ucamapp.cO.ucam_job();
-		if (curJob == null)
-			textArea.append("curJob jest null!" + " \n");
-		else
-			textArea.append("curJob: " + curJob + " \n");
-
-		// Get information regarding the job.
-		textArea.append("Job name : " + job.name() + "\n");
-		textArea.append("Customer : " + job.customer() + "\n");
-
-		// --------------------------------
-		textArea.append("Przed: job.activelayers(): " + job.activelayers() + "\n");
-		job.setactive("all");
-		textArea.append("Po: job.activelayers(): " + job.activelayers() + "\n");
-
-		Udrilayer myLayer = (Udrilayer) Udrilayer.cO.create();
-
-		myLayer.setinfo("Jakies info");
-		myLayer.setname("NewLayer");
-		myLayer.setactive(true);
-
-		textArea.append("Udrilayer.cO.create(): " + myLayer + "\n");
-		textArea.append("job.activelayers(): " + job.activelayers() + "\n");
-
-		textArea.append("Przed: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
-		Ubloape block2 = (Ubloape) Ubloape.cO.create(10, myLayer);
-		myLayer.addape(block2);
-
-		Uape cir2 = Ucirape.cO.create(20, 5.0);
-		myLayer.addape(cir2);
-		textArea.append("Po: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
-
-		if (Ucamv6.ucam_job == null) {
-			textArea.append("Ucamv6.ucam_job == null\n");
-			// return;
-		}
-
-		curJob = Ucamapp.cO.ucam_job();
-		if (curJob == null)
-			textArea.append("curJob jest null!" + " \n");
+		//		Uxjob curJob = Ucamapp.cO.ucam_job();
+		//		if (curJob == null)
+		//			textArea.append("curJob jest null!" + " \n");
+		//		else
+		//			textArea.append("curJob: " + curJob + " \n");
+		//
+		//		// Get information regarding the job.
+		//		textArea.append("Job name : " + job.name() + "\n");
+		//		textArea.append("Customer : " + job.customer() + "\n");
+		//
+		//		// --------------------------------
+		//		textArea.append("Przed: job.activelayers(): " + job.activelayers() + "\n");
+		//		job.setactive("all");
+		//		textArea.append("Po: job.activelayers(): " + job.activelayers() + "\n");
+		//
+		//		Udrilayer myLayer = (Udrilayer) Udrilayer.cO.create();
+		//
+		//		myLayer.setinfo("Jakies info");
+		//		myLayer.setname("NewLayer");
+		//		myLayer.setactive(true);
+		//
+		//		textArea.append("Udrilayer.cO.create(): " + myLayer + "\n");
+		//		textArea.append("job.activelayers(): " + job.activelayers() + "\n");
+		//
+		//		textArea.append("Przed: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
+		//		Ubloape block2 = (Ubloape) Ubloape.cO.create(10, myLayer);
+		//		myLayer.addape(block2);
+		//
+		//		Uape cir2 = Ucirape.cO.create(20, 5.0);
+		//		myLayer.addape(cir2);
+		//		textArea.append("Po: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
+		//
+		//		if (Ucamv6.ucam_job == null) {
+		//			textArea.append("Ucamv6.ucam_job == null\n");
+		//			// return;
+		//		}
+		//
+		//		curJob = Ucamapp.cO.ucam_job();
+		//		if (curJob == null)
+		//			textArea.append("curJob jest null!" + " \n");
 
 		//
 		// textArea.append("curJob.: " + curJob.toString() + " \n");
@@ -605,8 +607,6 @@ public class UMain extends JFrame {
 		// textArea.append("\n");
 		// }
 
-		
-		// smietnik
 		// http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 		//				URDPATH=C:/mb/Ucam92/env/dat
@@ -619,19 +619,19 @@ public class UMain extends JFrame {
 		//				UFNTDIR=C:/mb/Ucam92/env/dat/fonts
 
 		// system properties to nie to samo co system environment variables
-//		FileInputStream propFile;
-//		try {
-//			propFile = new FileInputStream("myProperties.txt");
-//			Properties p = new Properties(System.getProperties());
-//			p.load(propFile);
-//			System.setProperties(p);
-//
-//		} catch (FileNotFoundException e1) {
-//			e1.getMessage();
-//		} catch (IOException e) {
-//			e.getMessage();
-//		}
-		
+		//		FileInputStream propFile;
+		//		try {
+		//			propFile = new FileInputStream("myProperties.txt");
+		//			Properties p = new Properties(System.getProperties());
+		//			p.load(propFile);
+		//			System.setProperties(p);
+		//
+		//		} catch (FileNotFoundException e1) {
+		//			e1.getMessage();
+		//		} catch (IOException e) {
+		//			e.getMessage();
+		//		}
+
 	}
 
 	private void saveText() {
