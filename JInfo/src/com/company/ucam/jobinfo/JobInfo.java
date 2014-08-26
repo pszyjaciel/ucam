@@ -79,10 +79,7 @@ import java.util.Map;
 // github:
 // http://stackoverflow.com/questions/3601805/auth-failed-error-with-egit-and-github/5965118#5965118
 
-/**
- * Implements a window with a menubar and an area to display the job
- * information.
- */
+
 public class JobInfo extends JFrame {
  
 	
