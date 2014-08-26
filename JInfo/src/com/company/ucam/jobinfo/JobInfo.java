@@ -81,7 +81,8 @@ import java.util.Map;
  * information.
  */
 public class JobInfo extends JFrame {
-
+ 
+	
 	JTextArea textArea;
 
 	public static void main(String[] args) {
