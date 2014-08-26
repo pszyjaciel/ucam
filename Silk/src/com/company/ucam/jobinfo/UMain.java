@@ -344,6 +344,7 @@ public class UMain extends JFrame {
 		textArea.append("\noutline_p is exported to ext. gerber: " + i);
 		outline_p.unload();
 
+		
 		//		Properties p = new Properties(System.getProperties());
 		//		p.list(System.out);
 
