@@ -345,7 +345,6 @@ public class UMain extends JFrame {
 		outline_p.unload();
 
 	
-
 		// ------------------------- koniec wlasciwego programu ------------------------
 
 		// smietnik
