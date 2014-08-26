@@ -344,6 +344,16 @@ public class UMain extends JFrame {
 		textArea.append("\noutline_p is exported to ext. gerber: " + i);
 		outline_p.unload();
 
+	
+
+		// ------------------------- koniec wlasciwego programu ------------------------
+
+		// smietnik
+
+		
+		
+		// ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCqWO10CBnWMuJ0QV7/FadW5jboMEz/1jNMG20U9hzjjWldlKH7JHTQc92Hb7U6oL1B2wmkkiZ6lduAmgIWQMX7JDKMxbRe8mVNFMN9UuyHsFpSltHvC7HvR1tv9KH6XwPi3hgaT0LO+ZeMvJsw+UCcrHmoT/kS/1CbbjOK47DeAw== RSA-1024
+				
 		
 		//		Properties p = new Properties(System.getProperties());
 		//		p.list(System.out);
@@ -351,11 +361,7 @@ public class UMain extends JFrame {
 		//		textArea.append("job.numactivelay(): " + job.numactivelay() + "\n");
 
 		// 		ktcomp_p.getape(num);
-
-		// ------------------------- koniec wlasciwego programu ------------------------
-
-		// smietnik
-
+		
 		//		outline_p.select_object("d");
 		//		i = outline_p.select_count();
 		//		textArea.append("\noutline_p.select_count(): " + i + "\n");
