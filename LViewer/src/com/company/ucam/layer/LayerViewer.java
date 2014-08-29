@@ -8,6 +8,13 @@
 // This should be the first line of code in the source file.
 package com.company.ucam.layer;
 
+/* 
+ * Kompilacja:
+ * c:\\progra~2\Java\\jdk1.7.0_65\\bin\\javac.exe -Xlint -d u:\\ucamusers\\java\\ucam\\home\\ -classpath u:\\ucamusers\\java\\ucam\\home\\;c:\\mb\\Ucam92\\classes\\ucam.jar u:\\ucamusers\\java\\ucam\\home\\git\\LayerViewer\\LViewer\\src\\com\\company\\ucam\\layer\\LayerViewer.java 
+ * c:\\progra~2\Java\\jdk1.7.0_65\\bin\\javac.exe -Xlint -d u:\\ucamusers\\java\\ucam\\home\\ -classpath u:\\ucamusers\\java\\ucam\\home\\;c:\\mb\\Ucam92\\classes\\ucam.jar u:\\ucamusers\\java\\ucam\\home\\git\\LayerViewer\\LViewer\\src\\UcamMenuActions.java  
+ * c:\\progra~2\Java\\jdk1.7.0_65\\bin\\javac.exe -Xlint -d u:\\ucamusers\\java\\ucam\\home\\ -classpath u:\\ucamusers\\java\\ucam\\home\\;c:\\mb\\Ucam92\\classes\\ucam.jar u:\\ucamusers\\java\\ucam\\home\\git\\LayerViewer\\LViewer\\src\UcamActions.java 
+ */
+
 // Standard Ucam packages.
 import com.barco.ets.ucam.dtl.*;
 import com.barco.ets.ucam.ui.*;
