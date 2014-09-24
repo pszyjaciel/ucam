@@ -1,0 +1,4 @@
+MSGERR:test
+javax.swing.SwingUtilities$SharedOwnerFrame[frame0,0,0,0x0,invalid,hidden,layout=java.awt.BorderLayout,title=,resizable,normal]
+com.barco.ets.ucam.log4ucam.LogViewerGUI[dialog0,0,0,0x0,invalid,hidden,layout=java.awt.BorderLayout,MODELESS,defaultCloseOperation=HIDE_ON_CLOSE,rootPane=javax.swing.JRootPane[,0,0,0x0,invalid,layout=javax.swing.JRootPane$RootLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=16777673,maximumSize=,minimumSize=,preferredSize=],rootPaneCheckingEnabled=true]
+com.barco.ets.ucam.log4ucam.LogViewerGUI[view_message_window,0,0,0x0,invalid,hidden,layout=java.awt.BorderLayout,MODELESS,title=Messages,defaultCloseOperation=HIDE_ON_CLOSE,rootPane=javax.swing.JRootPane[,0,0,0x0,invalid,layout=javax.swing.JRootPane$RootLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=16777673,maximumSize=,minimumSize=,preferredSize=],rootPaneCheckingEnabled=true]

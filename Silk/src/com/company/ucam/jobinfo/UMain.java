@@ -1,7 +1,20 @@
 package com.company.ucam.jobinfo;
 
-/* patrz na sciezke:
- C:\Program Files\Common Files\Microsoft Shared\Windows Live;
+/* 
+ * 
+ *  -help              : Shows this commandline help.
+ -showversion       : Shows the used versions of ucam, java, the OS, and all the default java paths.
+ -unit= <curunit>   : Sets the current unit, where curunit can be mm, inch or mil.
+ -job <job_file>    : Loads the given job, full path should be added.
+ -dpf <dpf_file>    : Loads a new temporary job containing the defined dpf-file.
+ -nologwindow       : Disables Ucam's "Messages" window, which is an alternative for Java's Console window.
+                This option can and should only be used when starting java instead of javaw,
+                because javaw does not have an associated Console window,
+                which would leave you without any console output.
+ -record= <name.rec>   : Records the started ucam session into the filename name.rec.
+ -playback= <name.rec> : Plays back a recorded ucam session with the filename: name.rec.
+ 
+ * patrz na sciezke:
  C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;
  %SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;
  %SYSTEMROOT%\System32\WindowsPowerShell\v1.0\;
@@ -74,31 +87,42 @@ package com.company.ucam.jobinfo;
  *
  */
 
+
+
+
 // Standard Ucam packages.
-import com.barco.ets.ucam.hypertool.*;
-
-// Need to import because in the standard package.
-
-// Additional packages needed.
-import javax.swing.*;
-
 import java.awt.Font;
-import java.awt.event.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class UMain extends JFrame {
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import com.barco.ets.ucam.hypertool.Uape;
+import com.barco.ets.ucam.hypertool.UcamMain;
+import com.barco.ets.ucam.hypertool.Ucamobj;
+import com.barco.ets.ucam.hypertool.Uextlayer;
+import com.barco.ets.ucam.hypertool.Ufd;
+import com.barco.ets.ucam.hypertool.Ujob;
+import com.barco.ets.ucam.hypertool.Ulayer;
+import com.barco.ets.ucam.log4ucam.ILogListener;
+
+
+
+public class UMain extends JFrame implements ILogListener {
 
 	JTextArea textArea;
 	Ujob job;
 
 	public static void main(String[] args) {
-
 		UcamMain.setup();
+		
 
 		// Create a new window and display it.
 		new UMain().setVisible(true);
@@ -168,72 +192,350 @@ public class UMain extends JFrame {
 
 	int index = 0;
 	int i;
+	private Ulayer[] myUlayObj;
 
-	public double findClearance(Ulayer layer) {
-		double x1 = 100;
-		double y1 = 400;
-		double x2 = 50;
-		double y2 = 80;
+	private Ulayer comp_p = null;
+	private Ulayer sold_p = null;
+	private Ulayer ktcomp_p = null;
+	private Ulayer ktsold_p = null;
+	private Ulayer outline_p = null;
+	private Ulayer outline_s = null;
 
-		Upoint p1 = new Upoint(x1, y1);
-		Upoint p2 = new Upoint(x2, y2);
-		double radius = 50;
-
-		Uapeobj apeobj1 = layer.closestobj(p1, radius);
-		Uapeobj apeobj2 = layer.closestobj(p2, radius);
-
-		double clearance = 0;
-		// Calculate the clearance when 2 objects were selected.
-		if ((apeobj1 != null) && (apeobj2 != null)) {
-			clearance = apeobj1.clearance_to(apeobj2);
-			textArea.append(String.valueOf(clearance));
-		} else {
-			Ucamapp.cO.warning("No object found.");
-		}
-		return clearance;
-	}
+	private int num = 0;
+	private int numLayers;
 
 	private void runJob() {
 
 		textArea.setText("\n");
 
 		// Read in the job.
-		String fileName = "u:\\jobs\\130-11310\\silk\\130-11310_p.job";
+		// String fileName = "u:\\jobs\\130-11310\\silk\\130-11310_p.job";
+		// String fileName = "u:\\jobs\\1437-11443\\1437-11443_p.job";
+		String fileName = "u:\\jobs\\201-11509\\201-11509_p.job";
 
 		job = Ujob.cO.read(fileName);
 
 		if (job == null) {
-			System.out.println("Invalid job file");
+			textArea.append("Error: Invalid job file: " + fileName + "\n");
 			return;
 		}
 
-		// czytaj wszystkie wartswy
-		int numLayers = job.numlayers();
-		for (int i = 1; i <= numLayers; ++i) {
-			Ucamobj layer = job.getlayer("all", "", i);
-			if (layer.name().equals("ktcomp_p") || layer.name().equals("comp_p") || layer.name().equals("outline_p")) {
-				textArea.append("File specification : " + layer.spec() + "\n");
-			}
+		int caseSilk = 0;
+
+		int k = 0, j = 0;
+		numLayers = job.numlayers();
+		myUlayObj = new Ulayer[numLayers];
+
+		/*
+		 * zrob liste layerow w jobie i zapisz te obiekty do jakies tablicy  
+		 * 
+		 * znajdz w tej liscie np silka/top i przypisz do zmiennej np. silkTop
+		 * to samo dla silkBottom, comp, sold, outline 
+		 */
+
+		for (k = 1; k <= numLayers; k++) {
+			Ucamobj layer = job.getlayer("all", "", k);
+			if (layer != null) {
+				myUlayObj[j] = (Ulayer) layer; // dodaj warstwe do tablicy objektow
+
+				String lName = myUlayObj[j].name();
+				String lClass = (String) myUlayObj[j].CLASS();
+				String lSubclass = myUlayObj[j].subclass();
+				String lAttach = myUlayObj[j].attach();
+
+				// textArea.append(lName + " - " + lClass + " - " + lSubclass + " - " + lAttach + "\n");
+
+				if (lName.equals("comp_p") && lClass.equals("layer") && lSubclass.equals("outer")) {
+					comp_p = (Ulayer) layer;
+				} else if (lName.equals("sold_p") && lClass.equals("layer") && lSubclass.equals("outer")) {
+					sold_p = (Ulayer) layer;
+				} else if (lName.equals("ktcomp_p") && lClass.equals("extra") && lSubclass.equals("silk")
+						&& lAttach.equals("top")) {
+					ktcomp_p = (Ulayer) layer;
+				} else if (lName.equals("ktsold_p") && lClass.equals("extra") && lSubclass.equals("silk")
+						&& lAttach.equals("bottom")) {
+					ktsold_p = (Ulayer) layer;
+				} else if (lName.equals("outline_p") && lClass.equals("extra") && lSubclass.equals("outline")
+						&& lAttach.equals("none")) {
+					outline_p = (Ulayer) layer;
+				}
+			} else
+				textArea.append("layer: " + layer + "\n");
 		}
 
-		// uaktywnij warstwy
-		Ulayer ktcomp_p = job.getlayerbyname("ktcomp_p");
+		// silk on top
+		if (ktcomp_p != null && ktsold_p == null && outline_p != null) {
+			caseSilk = 1;
+		}
+
+		// silk on bottom
+		else if (ktcomp_p == null && ktsold_p != null && outline_p != null) {
+			caseSilk = 2;
+		}
+
+		// silk on both sides
+		else if (ktcomp_p != null && ktsold_p != null && outline_p != null) {
+			caseSilk = 3;
+		}
+
+		// no silk
+		else {
+			textArea.append("There is no silk at all. Exiting. \n");
+			return;
+		}
+
+		switch (caseSilk) {
+
+		// silk on top side
+		case 1: // 
+			textArea.append("Silk on top side. \n");
+			prepareTopSilk();
+			break;
+
+		// silk on bottom
+		case 2:
+			textArea.append("Silk on bottom side. \n");
+			copyOutline();
+			prepareBottomSilk();
+			break;
+
+		case 3: // silk on both sides
+			textArea.append("Silk on both sides. \n");
+
+			copyOutline();
+			prepareTopSilk();
+			prepareBottomSilk();
+			break;
+
+		default:
+			break;
+		}
+
+		// ------------------------- export do gerbera -----------------------
+		job.setactive("all", 0); // wylaczenie warstw
+
+		Ufd ufd = new Ufd();
+		double diam = 8;
+		double overlap = 1;
+		int nape = 1;
+
+		// tu sa parametry dla 274x: c:\03\Uout$CO.class (poz. 32% w pliku)
+		String[] myParam = new String[3];
+		myParam[0] = "MOIN";
+		myParam[1] = "FSLAX25Y25";
+		myParam[2] = "G04 Creator: SilkExport V3.01";
+
 		ktcomp_p.setactive(true);
-		textArea.append("ktcomp_p.active(): " + ktcomp_p.active() + "\n");
 
-		Ulayer comp_p = job.getlayerbyname("comp_p");
+		ktcomp_p.arc_expand(1); // dziala
+		ktcomp_p.select_shape("txt");
+		ktcomp_p.select_shape("com");
+		// textArea.append("ktcomp_p.select_count(): " + ktcomp_p.select_count() + "\n");
+
+		ktcomp_p.vectorfill(diam, overlap, nape, 1, "txt com", "sel", 1, ufd);
+		//ktcomp_p.vectorfill(diam, overlap, nape, 1, "txt com", "sel");
+
+		ktcomp_p.transform("", 90); // ... i obrot 90st
+		i = job.to_274x("C:\\mb\\cfg\\Cad", myParam);		// nie dziala w wersji 8.1
+		textArea.append("\n" + ktcomp_p.name() + " is exported to ext. gerber: " + i);
+		ktcomp_p.unload();
+
 		comp_p.setactive(true);
-		textArea.append("comp_p.active(): " + comp_p.active() + "\n");
+		comp_p.transform("", 90); // ... i obrot 90st
+		i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad", myParam);
+		textArea.append("\n" + comp_p.name() + " is exported to ext. gerber: " + i);
+		comp_p.unload();
 
-		Ulayer outline_p = job.getlayerbyname("outline_p");
 		outline_p.setactive(true);
-		textArea.append("outline_p.active(): " + outline_p.active() + "\n");
+		outline_p.transform("", 90); // ... i obrot 90st
+		i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad", myParam);
+		textArea.append("\n" + outline_p.name() + " is exported to ext. gerber: " + i);
+		outline_p.unload();
 
-		int cAppeNum = 0;
-		int num = 0;
-		String nApe = "";
+		if (ktsold_p != null) {
+			ktsold_p.setactive(true);
+
+			//ktsold_p.arc_expand(1); // dziala
+			ktsold_p.select_shape("txt");
+			ktsold_p.select_shape("com");
+			if (ktsold_p.select_count() != 0) {
+				// textArea.append("\nktsold_p.select_count(): " + ktsold_p.select_count() + "\n");
+				ktsold_p.vectorfill(diam, overlap, nape, 1, "txt, com", "sel", 1, ufd);
+			}
+
+			ktsold_p.transform("x", 90); // ... i obrot 90st
+			i = job.to_274x("C:\\mb\\cfg\\Cad", myParam);
+			textArea.append("\n" + ktsold_p.name() + " is exported to ext. gerber: " + i);
+			ktsold_p.unload();
+		}
+
+		if (sold_p != null && caseSilk != 1) {
+			sold_p.setactive(true);
+			sold_p.transform("x", 90); // ... i obrot 90st
+			i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad", myParam);
+			textArea.append("\n" + sold_p.name() + " is exported to ext. gerber: " + i);
+			sold_p.unload();
+		}
+
+		if (outline_s != null) {
+			outline_s.setactive(true);
+			outline_s.transform("x", 90); // ... i obrot 90st
+			i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad", myParam);
+			textArea.append("\n" + outline_s.name() + " is exported to ext. gerber: " + i);
+			outline_s.unload();
+		}
+
+		// ------------------------- koniec wlasciwego programu ------------------------
+
+	}
+
+	private void copyOutline() {
+		Uextlayer cl = (Uextlayer) Uextlayer.cO.create();
+
+		cl.setname("outline_s");
+		cl.setsubclass("outline");
+		cl.setattach("bottom");
+
+		numLayers = job.numlayers();
+		job.insertlayer(cl, numLayers + 1);
+
+		// i dolacz do joba
+		job.addlayer(cl);
+
+		outline_p.setactive(true);
+		outline_p.select_all("+");
+		// textArea.append("outline_p.select_count(): " + outline_p.select_count() + "\n");
+
+		outline_s = job.getlayerbyname("outline_s");
+		outline_s.setactive(true);
+
+		// Copies all data from the source object. Either "all" or "sel"
+		outline_s.copy(outline_p, "sel");
+
+	}
+
+	private void prepareBottomSilk() {
 		int iApe;
+		String nApe = "";
 		String nFrameApe = "";
+
+		sold_p.setactive(true);
+		ktsold_p.setactive(true);
+		outline_s.setactive(true);
+
+		// usun blok 2001
+		int cAppeNum = 0;
+		Uape olape = outline_s.firstape();
+		for (int i = 1; i <= outline_s.numapes(); ++i) {
+			nApe = olape.name();
+			if (nApe.equals("frame") || olape.num() == 2001) {
+				nFrameApe = nApe;
+				num = olape.num();
+				olape.select_curape();
+				cAppeNum += olape.select_count();
+				olape.erase();
+			}
+			olape = olape.next();
+		}
+		outline_s.ape_clean(); // trzeba posprzatac
+		// textArea.append(outline_s.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
+		//		+ " elements were deleted.\n");
+		// textArea.append("\n");
+
+		cAppeNum = 0;
+		Uape soldape = sold_p.firstape();
+		for (int i = 1; i <= sold_p.numapes(); ++i) {
+			iApe = soldape.num();
+			if (iApe != 2001 && iApe != 9005) {
+				nFrameApe = Integer.toString(iApe);
+				num = soldape.num();
+				soldape.select_curape();
+				cAppeNum += soldape.select_count();
+				soldape.erase();
+			}
+			soldape = soldape.next();
+		}
+		// textArea.append(sold_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
+		sold_p.ape_clean(); // trzeba posprzatac
+
+		// najpierw usunac zbedne elementy
+		cAppeNum = 0;
+		Uape ktape = ktsold_p.firstape();
+		for (int i = 1; i <= ktsold_p.numapes(); ++i) {
+			iApe = ktape.num();
+			if (iApe != 2001 && iApe != 9005) {
+				nFrameApe = Integer.toString(iApe);
+				num = ktape.num(); // Gets the aperture number
+				ktape.select_curape();
+				cAppeNum += ktape.select_count();
+				ktape.erase();
+			}
+			ktape = ktape.next();
+		}
+		// textArea.append(ktsold_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
+		ktsold_p.ape_clean(); // trzeba posprzatac
+
+		// expanduj warstwy
+		sold_p.block_expand(); // expand the layer
+		ktsold_p.block_expand(); // expand the layer
+		outline_s.block_expand(); // expand the layer
+
+		// znajdz ramke UgeKode i przekopiuj do outline
+		cAppeNum = 0;
+		ktape = ktsold_p.firstape();
+		for (int i = 1; i <= ktsold_p.numapes(); ++i) {
+			nApe = ktape.name();
+			if (nApe.equals("ktframe")) {
+				nFrameApe = nApe;
+				num = ktape.num();
+				ktape.select_curape();
+				cAppeNum += ktape.select_count();
+				if (cAppeNum > 0) {
+					outline_s.copy(ktsold_p, "sel");
+				}
+				ktape.erase();
+			}
+			ktape = ktape.next();
+		}
+		if (cAppeNum == 0) {
+			textArea.append("'ktframe' was not found on layer: " + ktsold_p.name() + "\n");
+		} else {
+			// textArea.append(ktsold_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
+			// 		+ " elements were copied and deleted.\n");
+		}
+		ktsold_p.ape_clean(); // trzeba posprzatac
+
+	}
+
+	private void prepareTopSilk() {
+		int iApe;
+		String nApe = "";
+		String nFrameApe = "";
+
+		ktcomp_p.setactive(true);
+		comp_p.setactive(true);
+		outline_p.setactive(true);
+
+		// usun blok 2001
+		int cAppeNum = 0;
+		Uape olape = outline_p.firstape();
+		for (int i = 1; i <= outline_p.numapes(); ++i) {
+			nApe = olape.name();
+			if (nApe.equals("frame") || olape.num() == 2001) {
+				nFrameApe = nApe;
+				num = olape.num();
+				olape.select_curape();
+				cAppeNum += olape.select_count();
+				olape.erase();
+			}
+			olape = olape.next();
+		}
+		outline_p.ape_clean(); // trzeba posprzatac
+		// textArea.append(outline_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
+		//		+ " elements were deleted.\n");
+		// textArea.append("\n");
+
+		cAppeNum = 0;
 		Uape compape = comp_p.firstape();
 		for (int i = 1; i <= comp_p.numapes(); ++i) {
 			iApe = compape.num();
@@ -246,14 +548,15 @@ public class UMain extends JFrame {
 			}
 			compape = compape.next();
 		}
-		textArea.append(comp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
+		// textArea.append(comp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
 		comp_p.ape_clean(); // trzeba posprzatac
 
 		// najpierw usunac zbedne elementy
+		cAppeNum = 0;
 		Uape ktape = ktcomp_p.firstape();
 		for (int i = 1; i <= ktcomp_p.numapes(); ++i) {
 			iApe = ktape.num();
-			if (!nApe.equals("ktframe") && iApe != 2001 && iApe != 9005) {
+			if (iApe != 2001 && iApe != 9005) {
 				nFrameApe = Integer.toString(iApe);
 				num = ktape.num(); // Gets the aperture number
 				ktape.select_curape();
@@ -262,7 +565,7 @@ public class UMain extends JFrame {
 			}
 			ktape = ktape.next();
 		}
-		textArea.append(ktcomp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
+		// textArea.append(ktcomp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum + " elements were deleted.\n");
 		ktcomp_p.ape_clean(); // trzeba posprzatac
 
 		// expanduj warstwy
@@ -271,6 +574,7 @@ public class UMain extends JFrame {
 		outline_p.block_expand(); // expand the layer
 
 		// znajdz ramke UgeKode i przekopiuj do outline
+		cAppeNum = 0;
 		ktape = ktcomp_p.firstape();
 		for (int i = 1; i <= ktcomp_p.numapes(); ++i) {
 			nApe = ktape.name();
@@ -279,369 +583,35 @@ public class UMain extends JFrame {
 				num = ktape.num();
 				ktape.select_curape();
 				cAppeNum += ktape.select_count();
-				outline_p.copy(ktcomp_p, "sel");
+				if (cAppeNum > 0) {
+					outline_p.copy(ktcomp_p, "sel");
+				}
 				ktape.erase();
 			}
 			ktape = ktape.next();
 		}
-		textArea.append(ktcomp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
-				+ " elements were copied and deleted.\n");
-		ktcomp_p.ape_clean(); // trzeba posprzatac
-
-		// usun blok 2001
-		Uape olape = outline_p.firstape();
-		for (int i = 1; i <= outline_p.numapes(); ++i) {
-			nApe = olape.name();
-			if (nApe.equals("frame")) {
-				nFrameApe = nApe;
-				num = olape.num();
-				olape.select_curape();
-				cAppeNum += olape.select_count();
-				olape.erase();
-			}
-			olape = olape.next();
+		if (cAppeNum == 0) {
+			textArea.append("'ktframe' was not found on layer: " + ktcomp_p.name() + "\n");
+		} else {
+			// textArea.append(ktcomp_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
+			//		+ " elements were copied and deleted.\n");
 		}
-		outline_p.ape_clean(); // trzeba posprzatac
-		textArea.append(outline_p.name() + ": " + nFrameApe + "(" + num + "): " + cAppeNum
-				+ " elements were deleted.\n");
-		textArea.append("\n");
-
-		job.setactive("all", 0); // wylaczenie warstw
-
-		ktcomp_p.setactive(true);
-		ktcomp_p.transform("", 90); // ... i obrot 90st
-
-		Ufd ufd = new Ufd();
-		double diam = 8;
-		double overlap = 1;
-		int nape = 1;
-		// job.to_ext("ger274x", "u:\\ucam-cfg\\cfg\\Cad");	// wywala brak licencji
-
-		ktcomp_p.arc_expand(1); // dziala
-		ktcomp_p.select_shape("txt");
-		ktcomp_p.select_shape("com");
-		textArea.append("ktcomp_p.select_count(): " + ktcomp_p.select_count() + "\n");
-
-		ktcomp_p.vectorfill(diam, overlap, nape, 1, "txt com", "sel", 1, ufd);
-		// vectorfill nie dziala jak bylo brak zmiennych w environment:
-		//		set FNTDIR=%ETSCAM_DAT%\fonts
-		//		set UFNTDIR=%ETSCAM_DAT%\fonts
-		//		set UCAM_LANG=english
-
-		i = job.to_274x("C:\\mb\\cfg\\Cad");
-		textArea.append("\nktcomp_p is exported to ext. gerber: " + i);
-		ktcomp_p.unload();
-
-		comp_p.setactive(true);
-		comp_p.transform("", 90); // ... i obrot 90st
-		i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad");
-		textArea.append("\ncomp_p is exported to ext. gerber: " + i);
-		comp_p.unload();
-
-		outline_p.setactive(true);
-		outline_p.transform("", 90); // ... i obrot 90st
-		i = job.to_274x("u:\\ucam-cfg\\cfg\\Cad");
-		textArea.append("\noutline_p is exported to ext. gerber: " + i);
-		outline_p.unload();
-
-	
-		// ------------------------- koniec wlasciwego programu ------------------------
-
-		// smietnik
-
-		
-		
-		// ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCqWO10CBnWMuJ0QV7/FadW5jboMEz/1jNMG20U9hzjjWldlKH7JHTQc92Hb7U6oL1B2wmkkiZ6lduAmgIWQMX7JDKMxbRe8mVNFMN9UuyHsFpSltHvC7HvR1tv9KH6XwPi3hgaT0LO+ZeMvJsw+UCcrHmoT/kS/1CbbjOK47DeAw== RSA-1024
-				
-		
-		//		Properties p = new Properties(System.getProperties());
-		//		p.list(System.out);
-
-		//		textArea.append("job.numactivelay(): " + job.numactivelay() + "\n");
-
-		// 		ktcomp_p.getape(num);
-		
-		//		outline_p.select_object("d");
-		//		i = outline_p.select_count();
-		//		textArea.append("\noutline_p.select_count(): " + i + "\n");
-		//
-		//		outline_p.select_all("-");
-		//
-		//		outline_p.select_object("f");
-		//		i = outline_p.select_count();
-		//		textArea.append("outline_p.select_count(): " + i + "\n");
-		//
-		//		outline_p.select_all("-");
-		//
-		//		outline_p.select_object("a");
-		//		i = outline_p.select_count();
-		//		textArea.append("outline_p.select_count(): " + i + "\n");
-		//
-		//		outline_p.select_all("-");
-		//
-		//		outline_p.select_object("v");
-		//		i = outline_p.select_count();
-		//		textArea.append("outline_p.select_count(): " + i + "\n");
-
-		// // utworz nowa warstwe
-		// Udrilayer cl = (Udrilayer) Udrilayer.cO.create();
-		//
-		// cl.setname("ANewDrillLayer_" + numLayers);
-		// job.insertlayer(cl, numLayers + 1);
-		//
-		// // i dolacz do joba
-		// job.addlayer(cl);
-		//
-		// // stworz nowa appe
-		// index++;
-		// int amax = cl.ape_max_number();
-		// Uape cir = Ucirape.cO.create(amax + 5, 35 + index);
-		// cl.addape(cir);
-		//
-		// Uape rec = Urecape.cO.create(amax + 5, 90 + index, 12 + index);
-		// cl.addape(rec);
-		//
-		// Uape box = Uboxape.cO.create(amax + 5, 25 + index, 15 + index, "r",
-		// 1.5, 1.2);
-		// cl.addape(box);
-		//
-		// // narysuj cos przy pomocy nowo stworzonej aperczury
-		// Uape ape = cl.firstape();
-		//
-		// // Urectangle(double xmin, double xmax, double ymin, double ymax)
-		// Urectangle urect = new Urectangle(0, 1150, 400, 3000); // x1:0,
-		// y1:400 / x2:1150, y2:3000
-		// ape.addrectangle(urect);
-		//
-		// boolean czyValid = urect.is_empty();
-		// textArea.append("urect.is_empty(): " + czyValid + "\n");
-		//
-		// double xmax = urect.xmax;
-		// double xmin = urect.xmin;
-		// double ymax = urect.ymax;
-		// double ymin = urect.ymin;
-		// textArea.append("xmax: " + xmax + "\n" + "xmin: " + xmin + "\n" +
-		// "ymax: " + ymax + "\n" + "ymin: " + ymin
-		// + "\n\n");
-		//
-		// ape.flash(0, 0);
-		// ape.flash(xmin + 100, ymin + 100);
-		// ape.flash(xmax - 100, ymax - 100);
-		//
-		// Upoint tl = urect.topleft();
-		// double xTopLeft = tl.x;
-		// double yTopLeft = tl.y;
-		// textArea.append("TopLeft: " + xTopLeft + " / " + yTopLeft + "\n");
-		//
-		// Upoint tr = urect.topright();
-		// double xTopRight = tr.x;
-		// double yTopRight = tr.y;
-		// textArea.append("TopRight: " + xTopRight + " / " + yTopRight + "\n");
-		//
-		// Upoint bl = urect.botleft();
-		// double xBottomLeft = bl.x;
-		// double yBottomLeft = bl.y;
-		// textArea.append("BottomLeft: " + xBottomLeft + " / " + yBottomLeft +
-		// "\n");
-		//
-		// Upoint br = urect.botright();
-		// double xBottomRight = br.x;
-		// double yBottomRight = br.y;
-		// textArea.append("BottomRight: " + xBottomRight + " / " + yBottomRight
-		// + "\n\n");
-		//
-		// Urectangle jobSize = job.enclosingbox("all");
-		// textArea.append("topleft: " + jobSize.topleft().x + " / " +
-		// jobSize.topleft().y + "\n");
-		// textArea.append("topright: " + jobSize.topright().x + " / " +
-		// jobSize.topright().y + "\n");
-		// textArea.append("botleft: " + jobSize.botleft().x + " / " +
-		// jobSize.botleft().y + "\n");
-		// textArea.append("botright: " + jobSize.botright().x + " / " +
-		// jobSize.botright().y + "\n\n");
-		//
-		// int apeNum = job.ape_max_number() + 1;
-		//
-		// String clStr = (String) cl.CLASS(); // Returns: "layer", "drill" or
-		// "extra".
-		// textArea.append("Type of loaded layer: " + clStr + "\n\n");
-		// Ulayer blockLayer = Ulayer.cO.create(clStr);
-		// blockLayer.copy(cl, "all"); // Copies all data from the source
-		// object. Either "all" or "sel"
-		// cl.erase("all");
-		// cl.ape_clean();
-		// Ubloape block = (Ubloape) Ubloape.cO.create(apeNum, blockLayer);
-		// cl.addape(block);
-		// block.repeat(4, xmax - xmin + 100, 0, 2, ymax - ymin + 100, 0);
-		//
-		// // Czytaj warstwe z joba
-		// Ulayer comp = job.getlayerbyname("comp");
-		// textArea.append("job.getlayerbyname(): " + comp + "\n"); // tez
-		// dziala
-		// comp.setactive(true);
-		// textArea.append("comp.active(): " + comp.active() + "\n");
-		//
-		// Ulayer sold = job.getlayerbyname("sold");
-		// textArea.append("job.getlayerbyname(): " + sold + "\n"); // tez
-		// dziala
-		// sold.setactive(true);
-		// textArea.append("sold.active(): " + sold.active() + "\n");
-		//
-		// comp.copy(sold, "all"); // Copies all data from the source object.
-		// Either "all" or "sel"
-
-		// --------------- DOTAD ZROBILEM ---------------
-
-		// Ucamobj lbn = job.getlayer("layer", "outer", 1);
-		// textArea.append("job.getlayer(): " + lbn + "\n");
-		//
-		// lbn = job.getlayer("layer", "outer", 2);
-		// textArea.append("job.getlayer(): " + lbn + "\n");
-
-		// lbn.copy_transform("", 45); // obraca z bledami, niektore elementy
-		// nie sa obracane
-		// String dokont = "c:\\jobs\\155-11182\\" + name; // rozszerzenie nie
-		// istotne
-		// lbn.laytobitmap(dokont, 600); // dziala, zapisuje TIFFa
-
-		// textArea.append("przed: Number of layers : " + job.numlayers() +
-		// "\n");
-		// Ujob couponJob = Ujob.cO.create();
-		//
-		// if (couponJob == null) {
-		// textArea.append("couponJob == null" + "\n");
-		// } else
-		// textArea.append("couponJob: " + couponJob.toString() + "\n");
-		//
-		// Udrilayer couponLayer = (Udrilayer) Udrilayer.cO.create();
-		// textArea.append("po: Number of layers : " + job.numlayers() + "\n");
-		//
-		// Udrilayer lay;
-		// lay = (Udrilayer) job.getlayer("drill", "", 1);
-
-		// Ulayer myUlayer = new Usiglayer();
-		// Usiglayer.cO.create();
-		// myUlayer.setactive(true);
-		// textArea.append("myUlayer" + myUlayer + "\n");
-
-		//		Uxjob curJob = Ucamapp.cO.ucam_job();
-		//		if (curJob == null)
-		//			textArea.append("curJob jest null!" + " \n");
-		//		else
-		//			textArea.append("curJob: " + curJob + " \n");
-		//
-		//		// Get information regarding the job.
-		//		textArea.append("Job name : " + job.name() + "\n");
-		//		textArea.append("Customer : " + job.customer() + "\n");
-		//
-		//		// --------------------------------
-		//		textArea.append("Przed: job.activelayers(): " + job.activelayers() + "\n");
-		//		job.setactive("all");
-		//		textArea.append("Po: job.activelayers(): " + job.activelayers() + "\n");
-		//
-		//		Udrilayer myLayer = (Udrilayer) Udrilayer.cO.create();
-		//
-		//		myLayer.setinfo("Jakies info");
-		//		myLayer.setname("NewLayer");
-		//		myLayer.setactive(true);
-		//
-		//		textArea.append("Udrilayer.cO.create(): " + myLayer + "\n");
-		//		textArea.append("job.activelayers(): " + job.activelayers() + "\n");
-		//
-		//		textArea.append("Przed: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
-		//		Ubloape block2 = (Ubloape) Ubloape.cO.create(10, myLayer);
-		//		myLayer.addape(block2);
-		//
-		//		Uape cir2 = Ucirape.cO.create(20, 5.0);
-		//		myLayer.addape(cir2);
-		//		textArea.append("Po: ul.ape_max_number(): " + myLayer.ape_max_number() + "\n");
-		//
-		//		if (Ucamv6.ucam_job == null) {
-		//			textArea.append("Ucamv6.ucam_job == null\n");
-		//			// return;
-		//		}
-		//
-		//		curJob = Ucamapp.cO.ucam_job();
-		//		if (curJob == null)
-		//			textArea.append("curJob jest null!" + " \n");
-
-		//
-		// textArea.append("curJob.: " + curJob.toString() + " \n");
-		// textArea.append("curJob.getInfo(): " + curJob.getInfo() + " \n");
-
-		// Uobjattrlist attrList = Ucamv6.ucam_job.attributes();
-		// int iloscAtt = attrList.used();
-		// textArea.append("attrList.used(): " + iloscAtt + "\n");
-
-		// Ulayer ul = Ulayer.cO.read("c:\\jobs\\155-11182\\comp");
-		//
-		// // trza wziasc go z joba
-		// String nejm = ul.name();
-		// textArea.append("ul.name(): " + nejm + "\n");
-		//
-		// ul.setactive(true); // gdy nie-active to reszta nie dziala
-		// // ul.copy_transform("", 90); // dziala
-		//
-		// int appe = ul.ape_max_number();
-		// textArea.append("ul.ape_max_number(): " + appe + "\n");
-		//
-		// int maxNum = ul.ape_max_number();
-		// Uape cir3 = Ucirape.cO.create(maxNum + 5, 50.3); // dziala!
-		// ul.addape(cir3);
-		// textArea.append("Po: Ucirape.cO.create(): " + ul.ape_max_number() +
-		// "\n");
-		// ul.save();
-		//
-		// Uape ape = ul.firstape();
-		// ul.addape(ape);
-		//
-		// ape = ul.firstape();
-		// ul.addape(ape);
-		// textArea.append("ul.firstape(): " + ape + "\n");
-		// //ul.save(); // wywala
-		//
-		// ape = ul.firstape();
-		// ape.flash(0, 10.0);
-		// ape.box(10, 20, 0.5, 0.25);
-
-		// Get information for each layer.
-		// for (int i = 1; i <= numLayers; ++i) {
-		// layer = job.getlayer("all", "", i);
-		// textArea.append("Layer " + i + " : " + layer.name() + "\n");
-		// textArea.append("File specification : " + layer.spec() + "\n");
-		//
-		// textArea.append("\n");
-		// }
-
-		// http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
-
-		//				URDPATH=C:/mb/Ucam92/env/dat
-		//				HOME=u:/ucamusers/java/ucam/home
-		//				ETSCAM_INSTALL=C:/mb/Ucam92
-		//				ETSCAM_DAT=C:/mb/Ucam92/env/dat
-		//				UCAM_LANG=english
-		//				CLASS_PATH=C:/mb/Ucam92/classes
-		//				FNTDIR=C:/mb/Ucam92/env/dat/fonts
-		//				UFNTDIR=C:/mb/Ucam92/env/dat/fonts
-
-		// system properties to nie to samo co system environment variables
-		//		FileInputStream propFile;
-		//		try {
-		//			propFile = new FileInputStream("myProperties.txt");
-		//			Properties p = new Properties(System.getProperties());
-		//			p.load(propFile);
-		//			System.setProperties(p);
-		//
-		//		} catch (FileNotFoundException e1) {
-		//			e1.getMessage();
-		//		} catch (IOException e) {
-		//			e.getMessage();
-		//		}
+		ktcomp_p.ape_clean(); // trzeba posprzatac
 
 	}
 
 	private void saveText() {
 		job.save();
-		textArea.append("Job zapisany do pliku." + "\n");
+		textArea.append("\nJob zapisany do pliku." + "\n");
 	}
+
+	/* (non-Javadoc)
+	 * @see com.barco.ets.ucam.log4ucam.ILogListener#addMessage(java.lang.String)
+	 */
+	public void addMessage(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

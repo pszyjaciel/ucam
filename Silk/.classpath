@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre_1.6.0-30"/>
-	<classpathentry kind="lib" path="C:/mb/Ucam92/classes/ucam.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/mb/Ucam81/classes/classes.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/mb/Ucam92/env/dat/ucam_html/Subsystems/HyperTool/Content/"/>
+			<attribute name="javadoc_location" value="file:/C:/mb/Ucam81/env/dat/ucam_html/Subsystems/HyperTool/Content/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
