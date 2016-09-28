@@ -6,6 +6,7 @@ to run the final project, which may need some time to strat. This way I also avo
 some errors, however the can appear in the main code after merging.
 
 
-![An_error](https://github.com/pszyjaciel/ucam/blob/master/errors-mistakes-avoid.jpg)
+![An_error](https://github.com/pszyjaciel/ucam/blob/master/myUcam/myUcamTest/errors-mistakes-avoid.jpg)
+
 
 10:44 AM 9/28/2016
