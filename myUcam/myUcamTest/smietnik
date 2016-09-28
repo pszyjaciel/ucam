@@ -1,0 +1,204 @@
+/*
+//cd u:\\ucamusers\java\\ucam\home\workspace\myUcamTest
+//c:\Programmer\Java\jdk1.5.0_05\bin\java.exe -jar mydrills_sa2.jar
+//c:\mb\Jre\jre_1.6.0-17\bin\jar.exe -cvfm mydrills_sa2.jar manifest.mf
+//added manifest
+
+
+@echo off
+rem kompilacja:
+rem c:\mb\Jre\jre_1.6.0-17\bin\jar.exe -cvfm mydrills_sa2.jar manifest.mf bin/*.class
+rem c:\mb\Jre\jre_1.6.0-17\bin\jar.exe -cvfm mydrills_sa2.jar manifest.mf
+
+rem set LM_LICENSE_FILE=c:\mb\Flexlm\mb_license.dat 
+
+set LM_LICENSE_FILE=c:\mb\Flexlm\elcon.da2 
+set MANIAB_LICENSE_FILE=c:\mb\Ucam85\env\cfg\mb_license.org 
+set ETSCAM_DAT=C:\mb\Ucam923\Ucam92\env\dat
+set ETSCAM_CFG=u:\\ucam-cfg\cfg
+set URDPATH=%ETSCAM_DAT%
+set ETSCAM_JAVA=c:\mb\Jre\jre_1.6.0-17
+set PATH=C:\mb\Ucam923
+set CLASS_PATH=c:\mb\Ucam923\Ucam92\classes
+set CLASSES=c:\mb\Ucam923\Ucam92\classes\\ucam.jar;bin
+
+rem c:\mb\Jre\jre_1.6.0-17\bin\java.exe -verbose -Djava.library.path=c:\mb\Ucam923\Ucam92\bin -classpath "%CLASSES%" myDrills_standalone
+c:\mb\Jre\jre_1.6.0-17\bin\java.exe -Djava.library.path=c:\mb\Ucam923\Ucam92\bin -classpath "%CLASSES%" myDrills_standalone
+rem start c:\mb\Jre\jre_1.6.0-17\bin\javaw.exe -Djava.library.path=c:\mb\Ucam923\Ucam92\bin -classpath "%CLASSES%" myDrills_standalone
+rem c:\mb\Jre\jre_1.6.0-17\bin\java.exe -jar mydrills_sa2.jar
+
+-------------------------
+export class to jar z katalogu: u:\\ucamusers\java\\ucam\home\workspace\myUcamTest\bin\
+(patrz tez Manifest.mf: bylo Main-Class: bin.myDrills_standalone)
+
+c:\Programmer\Java\jdk1.6.0_43\bin\jar.exe cmf Manifest.mf mydrills_sa2.jar myDrills_standalone.class 
+
+i uruchomienie jara: runme.bat
+.. i nie dziala.
+
+*/
+
+// set LM_LICENSE_FILE=c:\!Aspire\flexlm\mb_license.dat
+// set MANIAB_LICENSE_FILE=c:\mb\Flexlm\mb_license.org
+// set CLASSES=c:\mb\Ucam81\classes
+// set ETSCAM_CFG=u:\\ucam-cfg\cfg
+
+// System.out.print(myLayers[i].readable() + "\t");
+// System.out.print(myLayers[i].classname() + "\t");
+// System.out.print(myLayers[i].subclass() + "\t");
+// System.out.print(myLayers[i].attach() + "\t");
+// System.out.print(myLayers[i].name() + "\t");
+// System.out.print(myLayers[i].plane() + "\t");
+// System.out.println(myLayers[i].data());
+
+// T_dict t_dict = new T_dict(250, 50);
+//
+// String s3 = Ucamv6.ucam_db.get("toolbar.setup.file");
+// t_dict.add("toolbar.setup.file", s3);
+//
+// String s4 = Ucamv6.ucam_db.get("toolbar.folder.directory");
+// t_dict.add("toolbar.folder.directory", s4);
+//
+// String s1 = t_dict.keyat(0);
+// String s2 = (String) t_dict.objectof(s1);
+// System.out.println(s1 + ": " + s2);
+//
+// s1 = t_dict.keyat(1);
+// s2 = (String) t_dict.objectof(s1);
+// System.out.println(s1 + ": " + s2);
+//
+// System.out.println(t_dict.size());
+// System.out.println(t_dict.used());
+
+// Dict bedzie dobry. huja bedzie dobry.
+// Dict myDict = new Dict(10);
+// myDict.set("blo", 0.1);
+// myDict.set("cir", 0.1);
+// myDict.set("blo", 0.2); // key musi byc unikalny
+// myDict.set("rec", 0.1);
+
+// myDict.typa();
+
+// myDouble = myDict.getDouble("rec");
+// System.out.println(myDouble);
+//
+// myDict.removeAll();
+// System.out.println(myDict.size());
+
+// Dict myDict2 = new Dict(10);
+
+// myDict.set(0, 0.1); // nie ma keya na 0
+// myDict2.set(5, Double.parseDouble("1.0"));
+// myDict2.set(2, 2.25);
+// myDict2.set(6, 4.0);
+//
+// myDouble = 1.15;
+// Double double1 = new Double(myDouble);
+// myDict2.set(3, double1);
+//
+// myDict2.set(1, 1.10);
+// myDict2.set(4, 0.50);
+// myDict2.set(8, 2.40);
+// myDict2.set(7, 2.40);
+// myDict2.set(10, 2.50);
+// myDict2.set(9, 0.40);
+//
+// System.out.println("myDict2.size(): " + myDict2.size());
+// System.out.println("myDict2.sizeOf(): " + myDict2.sizeOf());
+//
+// Dict myDict3 = MyUcamUtils.sortDict(myDict2);
+// System.out.println("myDict3.sizeOf: " + myDict3.size());
+// System.out.println("myDict3.sizeOf(): " + myDict3.sizeOf());
+//
+// DTLBuiltin.typa(myDict3);
+//
+// for (int i = 1; i < myDict3.sizeOf(); i++) {
+// myDouble = myDict3.getDouble(i);
+// // System.out.println(myDouble);
+// }
+
+// Dict myDict3 = DTLBuiltin.sort(myDict2);
+// System.out.println(myDict3.sizeOf());
+// System.out.println(myDict3.getString(0));
+// DTLBuiltin.typa(myDict2);
+
+// System.out.println("myDict2.size(): " + myDict2.size());
+// System.out.println(myDict2.sizeOf());
+
+// String myKey = myDict2.keyAt(1);
+// System.out.println(myKey);
+
+// myDouble = myDict2.getDouble(1);
+// System.out.println(myDouble);
+//
+// myDouble = myDict2.getDouble(3);
+// System.out.println(myDouble);
+//
+// myDict2.typa();
+
+// -----------------------------
+
+// myDict2.set("1", 1.05);
+// myDict2.set("3", 0.30);
+// myDict2.set("8", 1.10);
+//
+// myDict2.set("2", 0.50);
+// myDict2.set("4", 1.80);
+// myDict2.set("6", 1.50);
+// myDict2.set("5", 0.80);
+// myDict2.typa();
+
+// Dict myDict3 = DTLBuiltin.sort(myDict2);
+// myDict3.typa();
+
+// System.out.println("--------------------------");
+
+// double[] myDoubleArray = DTLBuiltin.array(10, 0.0);
+// System.out.println(myDoubleArray.length);
+//
+// // double[] myDoubleArray2 = new double[10];
+// myDoubleArray[0] = 2.1;
+// myDoubleArray[5] = 0.35;
+// myDoubleArray[4] = 0.5;
+// myDoubleArray[1] = 1.3;
+// DTLBuiltin.typa(myDoubleArray);
+
+// DTLBuiltin.typa(myDoubleArray2);
+
+// Ucirape myucirape;
+// double myDouble, sizeBefore, sizeAfter;
+// int napes = myLayer.numapes();
+// for (int i = 1; i <= napes; i++) {
+// myucirape = (Ucirape) myLayer.getape(i);
+// sizeBefore = myucirape.outer();
+// // System.out.print("sizeBefore: " + (Math.round(sizeBefore * 100D) / 100.00D));
+// // myDouble = Ucamobj.cO.unit_convert(sizeBefore, "mil", "mm");
+// // System.out.print("sizeBefore: " + myDouble);
+//
+// sizeAfter = sizeBefore + 4;
+// myucirape.setouter(sizeAfter);
+// // System.out.println("\t\t sizeAfter: " + (Math.round(sizeAfter * 100D) / 100.00D));
+//
+// // myDouble = Ucamobj.cO.unit_convert(sizeAfter, "mil", "mm");
+// // System.out.println("\t\t sizeAfter: " + (Math.round(myDouble * 100D) / 100.00D));
+//
+// // teraz zaokraglic i ponumerowac od najmniejszego
+//
+// // System.out.println("\t\t sizeAfter: " + (Math.round(myDouble * 10) / 10.00));
+// // System.out.println("\t\t sizeAfter: " + (Math.round(myDouble * 1) / 1.00));
+// // System.out.println("\t\t sizeAfter: " + (Math.round(myDouble * 1)));
+// // myDouble = Ucamobj.cO.unit_convert(myucirape.outer(), "mil", "mm");
+// }
+
+// kazdy ucirape ma numer i srednice
+// wziac tabele srednic (double) i posortowac - proste
+// ale jak potem przyporzadkowac numery
+
+// public int num()
+// Gets the aperture number.
+
+// public void setnum(int num)
+// Sets the aperture number.
+
+// public void setname(java.lang.String name)
+// Sets the aperture name.
