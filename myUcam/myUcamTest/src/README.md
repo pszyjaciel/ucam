@@ -4,6 +4,9 @@ and to recognize them between each other.
 
 The output is:
 
+
+<span style="font-family: 'Lucida Console';">
+
 200:50
 all at once:
 599739 ns
@@ -230,5 +233,6 @@ shape4 && shape 5: false
 
 end of program.
 
+</span>
 
 9:29 AM 9/29/2016
