@@ -7,7 +7,9 @@ The input file is: <br />
 
 
 And the output as pdf is here: <br />
-!<https://github.com/pszyjaciel/ucam/blob/master/myUcam/myUcamTest/src/bmp/Document2.png>(https://github.com/pszyjaciel/ucam/blob/master/myUcam/myUcamTest/src/bmp/Document2.pdf)
+
+![Image](https://github.com/pszyjaciel/ucam/blob/master/myUcam/myUcamTest/src/bmp/Document2.png?raw=true "Output") <br />
+![PDF file](https://github.com/pszyjaciel/ucam/blob/master/myUcam/myUcamTest/src/bmp/Document2.pdf)
 
 
 
