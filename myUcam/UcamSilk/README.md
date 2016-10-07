@@ -8,7 +8,7 @@ Finally both layers are rotated and exported. <br />
 This script save about 10-15min (or even 30min when outputing 2 silk layers) for every job process. <br /><br />
 
 
-![Using silk output](https://github.com/pszyjaciel/ucam/blob/master/myUcam/UcamSilk/silk_output.png)
+![Using silk output](https://github.com/pszyjaciel/ucam/blob/master/myUcam/UcamSilk/silk_output2.png)
 
 
 9:00 PM 9/28/2016
