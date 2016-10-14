@@ -10,3 +10,11 @@ Other scripts will follow. Please enjoy it.
 
 
 9:10 PM 9/28/2016
+
+A new script for sorting of the holes in the drill layer is ready now.
+Often the holes are not sorted and have quite different apperture numbers.
+To bring the holes in orden one has to click them one by one and change the sizes, then put them on the right place.
+This script do it automatical.
+
+
+14.10.2016
