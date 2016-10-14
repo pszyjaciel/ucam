@@ -16,5 +16,6 @@ Often the holes are not sorted and have quite different apperture numbers.
 To bring the holes in orden one has to click them one by one and change the sizes, then put them on the right place.
 This script do it automatical.
 
+![Using sort holes](https://github.com/pszyjaciel/ucam/blob/master/myUcam/sort_holes.png)
 
 14.10.2016
