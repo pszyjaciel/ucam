@@ -2,8 +2,8 @@ The projects in this folder are considered to make the daily work easier in the 
 Some PCB manufacturers use the software called Ucam from Ucamco Company from Gent/Belgium.</br>
 This software has possibility to add any scripts which can be run within the Ucam.</br>
 Actually I made two working scripts:
-- the drilltime
-- the silk output
+- [the drilltime](https://github.com/pszyjaciel/ucam/tree/master/myUcam/UDrillTime)
+- [the silk output](https://github.com/pszyjaciel/ucam/tree/master/myUcam/UcamSilk)
 
 Other scripts will follow. Please enjoy it.</br></br>
 
